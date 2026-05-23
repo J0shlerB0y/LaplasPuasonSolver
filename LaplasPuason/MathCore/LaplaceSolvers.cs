@@ -37,14 +37,14 @@ namespace LaplasPuason.MathCore
         protected static PolarPoly ShiftToPolar(PolyXY p, CircularDomain d)
             => PolarPoly.FromPolyXY(p.ShiftBy(d.CenterX, d.CenterY));
 
-        protected static FourierSeries EvaluateAtRho(PolarPoly p, double rho)
+        protected static FourierSeries EvaluateAtRo(PolarPoly p, double Ro)
         {
             var fs = new FourierSeries();
             foreach (var t in p.Terms)
             {
-                double rhoPow = Math.Pow(rho, t.Key.K);
-                double logFactor = t.Key.HasLog ? Math.Log(rho) : 1.0;
-                double c = t.Value * rhoPow * logFactor;
+                double RoPow = Math.Pow(Ro, t.Key.K);
+                double logFactor = t.Key.HasLog ? Math.Log(Ro) : 1.0;
+                double c = t.Value * RoPow * logFactor;
                 fs.Add(t.Key.N, t.Key.IsSin, c);
             }
             return fs;
@@ -109,7 +109,7 @@ namespace LaplasPuason.MathCore
         public override SolutionResult Solve(BoundaryType type, PolyXY source, PolyXY[] boundary)
         {
             if (boundary == null || boundary.Length != 2)
-                throw new ArgumentException("Для кольца требуются две граничные функции.");
+                throw new ArgumentException("Для кольца требуются две граничные функции");
 
             var srcPolar = ShiftToPolar(source ?? PolyXY.Zero, Domain);
             var b1Polar = ShiftToPolar(boundary[0] ?? PolyXY.Zero, Domain);
@@ -125,8 +125,8 @@ namespace LaplasPuason.MathCore
 
             if (type == BoundaryType.Dirichlet)
             {
-                var H1 = EvaluateAtRho(b1Polar, R1) - EvaluateAtRho(up, R1);
-                var H2 = EvaluateAtRho(b2Polar, R2) - EvaluateAtRho(up, R2);
+                var H1 = EvaluateAtRo(b1Polar, R1) - EvaluateAtRo(up, R1);
+                var H2 = EvaluateAtRo(b2Polar, R2) - EvaluateAtRo(up, R2);
 
                 double lnR1 = Math.Log(R1);
                 double lnR2 = Math.Log(R2);
@@ -162,11 +162,11 @@ namespace LaplasPuason.MathCore
             }
             else
             {
-                var upDr = up.DerivativeRho();
-                var b1F = EvaluateAtRho(b1Polar, R1);
-                var b2F = EvaluateAtRho(b2Polar, R2);
-                var up1 = EvaluateAtRho(upDr, R1);
-                var up2 = EvaluateAtRho(upDr, R2);
+                var upDr = up.DerivativeRo();
+                var b1F = EvaluateAtRo(b1Polar, R1);
+                var b2F = EvaluateAtRo(b2Polar, R2);
+                var up1 = EvaluateAtRo(upDr, R1);
+                var up2 = EvaluateAtRo(upDr, R2);
 
                 var dV1 = (-b1F) - up1;
                 var dV2 = b2F - up2;
@@ -179,7 +179,7 @@ namespace LaplasPuason.MathCore
                 if (residual > 1e-6)
                 {
                     solvable = false;
-                    diag = "Условие разрешимости задачи Неймана не выполнено: невязка ≈ " + residual.ToString("G4") + ". ";
+                    diag = "Условие разрешимости задачи Неймана не выполнено: невязка примерно равно " + residual.ToString("G4");
                 }
                 double b0 = (b0From1 + b0From2) / 2.0;
                 v.Add(new PolarKey(0, 0, false, true), b0);
@@ -229,7 +229,7 @@ namespace LaplasPuason.MathCore
         public override SolutionResult Solve(BoundaryType type, PolyXY source, PolyXY[] boundary)
         {
             if (boundary == null || boundary.Length < 1)
-                throw new ArgumentException("Требуется одна граничная функция.");
+                throw new ArgumentException("Требуется одна граничная функция");
 
             var srcPolar = ShiftToPolar(source ?? PolyXY.Zero, Domain);
             var bPolar = ShiftToPolar(boundary[0] ?? PolyXY.Zero, Domain);
@@ -242,7 +242,7 @@ namespace LaplasPuason.MathCore
 
             if (type == BoundaryType.Dirichlet)
             {
-                var H = EvaluateAtRho(bPolar, R) - EvaluateAtRho(up, R);
+                var H = EvaluateAtRo(bPolar, R) - EvaluateAtRo(up, R);
                 v.Add(new PolarKey(0, 0, false, false), H.Get(0, false));
 
                 int nMax = H.MaxFrequency;
@@ -259,16 +259,16 @@ namespace LaplasPuason.MathCore
             }
             else
             {
-                var upDr = up.DerivativeRho();
-                var bF = EvaluateAtRho(bPolar, R);
-                var upF = EvaluateAtRho(upDr, R);
+                var upDr = up.DerivativeRo();
+                var bF = EvaluateAtRo(bPolar, R);
+                var upF = EvaluateAtRo(upDr, R);
                 var H = bF - upF;
 
                 double h0 = H.Get(0, false);
                 if (Math.Abs(h0) > 1e-6)
                 {
                     solvable = false;
-                    diag = "Условие разрешимости задачи Неймана не выполнено: невязка ≈ " + Math.Abs(h0).ToString("G4") + ". ";
+                    diag = "Условие разрешимости задачи Неймана не выполнено: невязка примерно равно " + Math.Abs(h0).ToString("G4");
                 }
 
                 int nMax = H.MaxFrequency;
@@ -304,7 +304,7 @@ namespace LaplasPuason.MathCore
         public override SolutionResult Solve(BoundaryType type, PolyXY source, PolyXY[] boundary)
         {
             if (boundary == null || boundary.Length < 1)
-                throw new ArgumentException("Требуется одна граничная функция.");
+                throw new ArgumentException("Требуется одна граничная функция");
 
             var srcPolar = ShiftToPolar(source ?? PolyXY.Zero, Domain);
             var bPolar = ShiftToPolar(boundary[0] ?? PolyXY.Zero, Domain);
@@ -316,11 +316,11 @@ namespace LaplasPuason.MathCore
             bool solvable = true;
 
             if (!srcPolar.IsZero)
-                diag += "Внимание: правая часть отлична от нуля. Внешнее решение Пуассона может быть неограниченным на бесконечности. ";
+                diag += "Внимание: правая часть отлична от нуля. Внешнее решение Пуассона может быть неограниченным на бесконечности";
 
             if (type == BoundaryType.Dirichlet)
             {
-                var H = EvaluateAtRho(bPolar, R) - EvaluateAtRho(up, R);
+                var H = EvaluateAtRo(bPolar, R) - EvaluateAtRo(up, R);
                 v.Add(new PolarKey(0, 0, false, false), H.Get(0, false));
 
                 int nMax = H.MaxFrequency;
@@ -337,16 +337,16 @@ namespace LaplasPuason.MathCore
             }
             else
             {
-                var upDr = up.DerivativeRho();
-                var bF = EvaluateAtRho(bPolar, R);
-                var upF = EvaluateAtRho(upDr, R);
+                var upDr = up.DerivativeRo();
+                var bF = EvaluateAtRo(bPolar, R);
+                var upF = EvaluateAtRo(upDr, R);
                 var dV = (-bF) - upF;
 
                 double h0 = dV.Get(0, false);
                 if (Math.Abs(h0) > 1e-6)
                 {
                     solvable = false;
-                    diag += "Условие разрешимости задачи Неймана не выполнено: невязка ≈ " + Math.Abs(h0).ToString("G4") + ". ";
+                    diag += "Условие разрешимости задачи Неймана не выполнено: невязка примерно " + Math.Abs(h0).ToString("G4");
                 }
 
                 int nMax = dV.MaxFrequency;

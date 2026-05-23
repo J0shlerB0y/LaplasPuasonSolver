@@ -112,7 +112,7 @@ namespace LaplasPuason.MathCore
 
         public PolyXY Pow(int n)
         {
-            if (n < 0) throw new InvalidOperationException("Отрицательная степень в полиноме недопустима.");
+            if (n < 0) throw new InvalidOperationException("Отрицательная степень в полиноме");
             var r = Const(1.0);
             for (int i = 0; i < n; i++) r = r * this;
             return r;
@@ -231,22 +231,22 @@ namespace LaplasPuason.MathCore
         public static PolyXY Parse(string input)
         {
             if (string.IsNullOrWhiteSpace(input))
-                throw new ParseException("Пустое выражение.");
+                throw new ParseException("Пустое выражение");
             var tokens = Tokenize(input);
             int pos = 0;
             var result = ParseAddSub(tokens, ref pos);
             if (pos < tokens.Count)
-                throw new ParseException("Ожидался конец выражения, найден символ '" + tokens[pos].Text + "'.");
+                throw new ParseException("Ожидался конец выражения, найден символ " + tokens[pos].Text);
             return result;
         }
 
         public static (PolyXY left, PolyXY right) ParseEquation(string input)
         {
             if (string.IsNullOrWhiteSpace(input))
-                throw new ParseException("Пустое уравнение.");
+                throw new ParseException("Пустое уравнение");
             int eqIndex = input.IndexOf('=');
             if (eqIndex < 0)
-                throw new ParseException("Ожидался знак '=' в уравнении окружности.");
+                throw new ParseException("Ожидался знак '=' в уравнении окружности");
             var left = Parse(input.Substring(0, eqIndex));
             var right = Parse(input.Substring(eqIndex + 1));
             return (left, right);
@@ -275,7 +275,7 @@ namespace LaplasPuason.MathCore
                     while (i < s.Length && (char.IsDigit(s[i]) || s[i] == '.')) i++;
                     var lit = s.Substring(start, i - start);
                     if (!double.TryParse(lit, NumberStyles.Float, CultureInfo.InvariantCulture, out var v))
-                        throw new ParseException("Некорректное число '" + lit + "'.");
+                        throw new ParseException("Некорректное число " + lit);
                     list.Add(new Token { Type = Tk.Number, Number = v, Text = lit });
                     continue;
                 }
@@ -296,7 +296,7 @@ namespace LaplasPuason.MathCore
                     case '(': list.Add(new Token { Type = Tk.LParen, Text = "(" }); i++; break;
                     case ')': list.Add(new Token { Type = Tk.RParen, Text = ")" }); i++; break;
                     default:
-                        throw new ParseException("Недопустимый символ '" + c + "'.");
+                        throw new ParseException("Недопустимый символ " + c);
                 }
             }
             return list;
@@ -330,9 +330,9 @@ namespace LaplasPuason.MathCore
                 else
                 {
                     if (!right.IsConstant(out var divisor))
-                        throw new ParseException("Деление допустимо только на численную константу.");
+                        throw new ParseException("Делитть можно только на численную константу");
                     if (Math.Abs(divisor) < 1e-15)
-                        throw new ParseException("Деление на ноль.");
+                        throw new ParseException("Деление на ноль");
                     left = left / divisor;
                 }
             }
@@ -362,9 +362,9 @@ namespace LaplasPuason.MathCore
                 pos++;
                 var exp = ParseUnary(t, ref pos);
                 if (!exp.IsConstant(out var exponentVal))
-                    throw new ParseException("Показатель степени должен быть целым числом.");
+                    throw new ParseException("Показател степени должен быть целым числом");
                 if (Math.Abs(exponentVal - Math.Round(exponentVal)) > 1e-9)
-                    throw new ParseException("Показатель степени должен быть целым числом.");
+                    throw new ParseException("Показател степени должен быть целым числом");
                 int n = (int)Math.Round(exponentVal);
                 return baseExpr.Pow(n);
             }
@@ -373,7 +373,7 @@ namespace LaplasPuason.MathCore
 
         private static PolyXY ParseAtom(List<Token> t, ref int pos)
         {
-            if (pos >= t.Count) throw new ParseException("Неожиданный конец выражения.");
+            if (pos >= t.Count) throw new ParseException("Неожиданный конец выражения");
             var tok = t[pos];
             if (tok.Type == Tk.Number)
             {
@@ -385,7 +385,7 @@ namespace LaplasPuason.MathCore
                 pos++;
                 var inner = ParseAddSub(t, ref pos);
                 if (pos >= t.Count || t[pos].Type != Tk.RParen)
-                    throw new ParseException("Ожидалась закрывающая скобка.");
+                    throw new ParseException("Ожидалась закрывающая скобка");
                 pos++;
                 return inner;
             }
@@ -395,10 +395,10 @@ namespace LaplasPuason.MathCore
                 if (tok.Text == "x") return PolyXY.X;
                 if (tok.Text == "y") return PolyXY.Y;
                 if (tok.Text == "log" || tok.Text == "ln")
-                    throw new ParseException("Логарифм пока не поддерживается в данной версии. Используйте полином в x и y.");
-                throw new ParseException("Неизвестный идентификатор '" + tok.Text + "'.");
+                    throw new ParseException("Логарифм пока не поддерживается в данной версии. Используйте полином в x и y");
+                throw new ParseException("Неизвестный идентификатор " + tok.Text);
             }
-            throw new ParseException("Неожиданный символ '" + tok.Text + "'.");
+            throw new ParseException("Неожиданный символ " + tok.Text);
         }
     }
 }

@@ -14,9 +14,9 @@ namespace LaplasPuason.MathCore
             CenterY = cy;
         }
 
-        public abstract double RhoMin { get; }
-        public abstract double RhoMax { get; }
-        public abstract bool ContainsPolar(double rho);
+        public abstract double RoMin { get; }
+        public abstract double RoMax { get; }
+        public abstract bool ContainsPolar(double Ro);
         public abstract string Description { get; }
     }
 
@@ -27,19 +27,19 @@ namespace LaplasPuason.MathCore
 
         public RingDomain(double cx, double cy, double rIn, double rOut) : base(cx, cy)
         {
-            if (rIn <= 0) throw new ArgumentException("Внутренний радиус должен быть положительным.");
-            if (rOut <= 0) throw new ArgumentException("Внешний радиус должен быть положительным.");
-            if (rIn >= rOut) throw new ArgumentException("Внутренний радиус должен быть меньше внешнего.");
+            if (rIn <= 0) throw new ArgumentException("Внутренний радиус должен быть положительныч");
+            if (rOut <= 0) throw new ArgumentException("Внешний радиус должен быть положительныч");
+            if (rIn >= rOut) throw new ArgumentException("Внутренний радиус должен быть меньше внешнего");
             RInner = rIn;
             ROuter = rOut;
         }
 
-        public override double RhoMin => RInner;
-        public override double RhoMax => ROuter;
-        public override bool ContainsPolar(double rho) => rho >= RInner && rho <= ROuter;
+        public override double RoMin => RInner;
+        public override double RoMax => ROuter;
+        public override bool ContainsPolar(double Ro) => Ro >= RInner && Ro <= ROuter;
         public override string Description =>
             string.Format(CultureInfo.InvariantCulture,
-                "Кольцо с центром ({0}, {1}), R₁ = {2}, R₂ = {3}", CenterX, CenterY, RInner, ROuter);
+                "Кольцо с центром ({0}, {1}), R1 = {2}, R2 = {3}", CenterX, CenterY, RInner, ROuter);
     }
 
     public sealed class InnerDiskDomain : CircularDomain
@@ -48,16 +48,15 @@ namespace LaplasPuason.MathCore
 
         public InnerDiskDomain(double cx, double cy, double r) : base(cx, cy)
         {
-            if (r <= 0) throw new ArgumentException("Радиус должен быть положительным.");
+            if (r <= 0) throw new ArgumentException("Радиус должен быть положительныч");
             R = r;
         }
 
-        public override double RhoMin => 0;
-        public override double RhoMax => R;
-        public override bool ContainsPolar(double rho) => rho <= R;
+        public override double RoMin => 0;
+        public override double RoMax => R;
+        public override bool ContainsPolar(double Ro) => Ro <= R;
         public override string Description =>
-            string.Format(CultureInfo.InvariantCulture,
-                "Внутренняя задача в круге с центром ({0}, {1}), R = {2}", CenterX, CenterY, R);
+            string.Format(CultureInfo.InvariantCulture,"Внутренняя задача в круге с центром ({0}, {1}), R = {2}", CenterX, CenterY, R);
     }
 
     public sealed class OuterDiskDomain : CircularDomain
@@ -66,16 +65,15 @@ namespace LaplasPuason.MathCore
 
         public OuterDiskDomain(double cx, double cy, double r) : base(cx, cy)
         {
-            if (r <= 0) throw new ArgumentException("Радиус должен быть положительным.");
+            if (r <= 0) throw new ArgumentException("Радиус должен быть положительныч");
             R = r;
         }
 
-        public override double RhoMin => R;
-        public override double RhoMax => 3.0 * R;
-        public override bool ContainsPolar(double rho) => rho >= R;
+        public override double RoMin => R;
+        public override double RoMax => 3.0 * R;
+        public override bool ContainsPolar(double Ro) => Ro >= R;
         public override string Description =>
-            string.Format(CultureInfo.InvariantCulture,
-                "Внешняя задача в круге с центром ({0}, {1}), R = {2}", CenterX, CenterY, R);
+            string.Format(CultureInfo.InvariantCulture, "Внешняя задача в круге с центром ({0}, {1}), R = {2}", CenterX, CenterY, R);
     }
 
     public static class CircleParser
@@ -86,21 +84,21 @@ namespace LaplasPuason.MathCore
                 throw new ParseException("Не указан центр окружности.");
             var parts = s.Split(',', ';');
             if (parts.Length != 2)
-                throw new ParseException("Центр должен быть задан в виде 'x,y'.");
+                throw new ParseException("Центр должен быть задан в виде 'x,y'");
             if (!double.TryParse(parts[0].Trim(), NumberStyles.Float, CultureInfo.InvariantCulture, out var cx) ||
                 !double.TryParse(parts[1].Trim(), NumberStyles.Float, CultureInfo.InvariantCulture, out var cy))
-                throw new ParseException("Координаты центра должны быть числами.");
+                throw new ParseException("Координаты центра должны быть числами");
             return (cx, cy);
         }
 
         public static double ParseRadius(string s)
         {
             if (string.IsNullOrWhiteSpace(s))
-                throw new ParseException("Не указан радиус.");
+                throw new ParseException("Не указан радиус");
             if (!double.TryParse(s.Trim(), NumberStyles.Float, CultureInfo.InvariantCulture, out var r))
-                throw new ParseException("Радиус должен быть числом.");
+                throw new ParseException("Радиус должен быть числом");
             if (r <= 0)
-                throw new ParseException("Радиус должен быть положительным.");
+                throw new ParseException("Радиус должен быть положительным");
             return r;
         }
 
@@ -116,15 +114,15 @@ namespace LaplasPuason.MathCore
             foreach (var t in poly.Terms)
             {
                 if (t.Key.P + t.Key.Q > 2)
-                    throw new ParseException("Уравнение содержит члены степени выше второй — это не уравнение окружности.");
+                    throw new ParseException("Уравнение содержит члены степени выше второй — это не уравнение окружности");
             }
 
             if (Math.Abs(cxx) < 1e-12)
-                throw new ParseException("В уравнении отсутствуют квадратичные члены — это не уравнение окружности.");
+                throw new ParseException("В уравнении отсутствуют квадратичные члены — это не уравнение окружности");
             if (Math.Abs(cxy) > 1e-9)
-                throw new ParseException("В уравнении присутствует член xy — это не окружность, а эллипс или гипербола.");
+                throw new ParseException("В уравнении присутствует член xy — это не окружность - эллипс или гипербола");
             if (Math.Abs(cxx - cyy) > 1e-9)
-                throw new ParseException("Коэффициенты при x² и y² различны — это не уравнение окружности.");
+                throw new ParseException("Коэффициенты при x^2 и y^2 различны — это не уравнение окружности");
 
             double a = poly.Coefficient(1, 0) / cxx;
             double b = poly.Coefficient(0, 1) / cxx;
@@ -134,7 +132,7 @@ namespace LaplasPuason.MathCore
             double cyOut = -b / 2.0;
             double r2 = cxOut * cxOut + cyOut * cyOut - c;
             if (r2 <= 1e-12)
-                throw new ParseException("Получился неположительный квадрат радиуса. Проверьте уравнение.");
+                throw new ParseException("Получился неположительный квадрат радиуса");
 
             return (cxOut, cyOut, Math.Sqrt(r2));
         }

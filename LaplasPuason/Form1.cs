@@ -55,8 +55,8 @@ namespace LaplasPuason
             {
                 if (isRing)
                 {
-                    lblRadius1.Text = "Уравнение внутр. окружности";
-                    lblRadius2.Text = "Уравнение внеш. окружности";
+                    lblRadius1.Text = "Уравнение внутренней окружности";
+                    lblRadius2.Text = "Уравнение внешней окружности";
                 }
                 else
                 {
@@ -67,8 +67,8 @@ namespace LaplasPuason
             {
                 if (isRing)
                 {
-                    lblRadius1.Text = "Введите радиус внутр. окружности";
-                    lblRadius2.Text = "Введите радиус внеш. окружности";
+                    lblRadius1.Text = "Введите радиус внутренней окружности";
+                    lblRadius2.Text = "Введите радиус внешней окружности";
                 }
                 else
                 {
@@ -78,7 +78,7 @@ namespace LaplasPuason
 
             if (isRing)
             {
-                lblBoundary2.Text = "Введите функцию на внеш. границе";
+                lblBoundary2.Text = "Введите функцию на внешней границе";
             }
             else
             {
@@ -213,37 +213,37 @@ namespace LaplasPuason
             if (_lastResult == null || _lastDomain == null) { plotPanel.Invalidate(); return; }
 
             bool isNeumann = _lastType == BoundaryType.Neumann;
-            plotPanel.ZLabel = isNeumann ? "∂u/∂ρ" : "u(x, y)";
+            plotPanel.ZLabel = isNeumann ? "du/dRo" : "u(x, y)";
             plotPanel.Title = isNeumann
                 ? "Радиальная производная решения и граничные условия"
                 : "Решение и граничные условия";
 
             PolarPoly displayed = isNeumann
-                ? _lastResult.FullSolution.DerivativeRho()
+                ? _lastResult.FullSolution.DerivativeRo()
                 : _lastResult.FullSolution;
 
             var solutionSeries = new PlotSeries
             {
                 Color = Color.FromArgb(40, 70, 200),
                 MarkerSize = 2.0f,
-                Label = isNeumann ? "∂u/∂ρ внутри области" : "u(x, y) внутри области"
+                Label = isNeumann ? "du/dRo внутри области" : "u(x, y) внутри области"
             };
 
-            int rhoSteps = 50;
+            int RoSteps = 50;
             int phiSteps = 120;
-            double rhoMin = _lastDomain.RhoMin;
-            double rhoMax = _lastDomain.RhoMax;
-            if (_lastDomain is InnerDiskDomain) rhoMin = Math.Max(rhoMin, 1e-6);
+            double RoMin = _lastDomain.RoMin;
+            double RoMax = _lastDomain.RoMax;
+            if (_lastDomain is InnerDiskDomain) RoMin = Math.Max(RoMin, 1e-6);
 
-            for (int i = 0; i <= rhoSteps; i++)
+            for (int i = 0; i <= RoSteps; i++)
             {
-                double rho = rhoMin + (rhoMax - rhoMin) * i / (double)rhoSteps;
+                double Ro = RoMin + (RoMax - RoMin) * i / (double)RoSteps;
                 for (int j = 0; j < phiSteps; j++)
                 {
                     double phi = 2 * Math.PI * j / (double)phiSteps;
-                    double z = displayed.Evaluate(rho, phi);
-                    double x = _lastDomain.CenterX + rho * Math.Cos(phi);
-                    double y = _lastDomain.CenterY + rho * Math.Sin(phi);
+                    double z = displayed.Evaluate(Ro, phi);
+                    double x = _lastDomain.CenterX + Ro * Math.Cos(phi);
+                    double y = _lastDomain.CenterY + Ro * Math.Sin(phi);
                     if (double.IsNaN(z) || double.IsInfinity(z)) continue;
                     solutionSeries.Points.Add(new PlotPoint(x, y, z));
                 }
@@ -278,21 +278,21 @@ namespace LaplasPuason
             {
                 double s1 = isNeumann ? -1.0 : 1.0;
                 double s2 = 1.0;
-                string suffix = isNeumann ? " (≡ ∂u/∂ρ)" : string.Empty;
-                AddCircle(ring.RInner, b1, s1, Color.FromArgb(0, 160, 60), "Граница ρ = R₁" + suffix);
-                AddCircle(ring.ROuter, b2, s2, Color.FromArgb(220, 30, 30), "Граница ρ = R₂" + suffix);
+                string suffix = isNeumann ? " (= du/dRo)" : string.Empty;
+                AddCircle(ring.RInner, b1, s1, Color.FromArgb(0, 160, 60), "Граница Ro = R1" + suffix);
+                AddCircle(ring.ROuter, b2, s2, Color.FromArgb(220, 30, 30), "Граница Ro = R2" + suffix);
             }
             else if (_lastDomain is InnerDiskDomain inner)
             {
                 double sign = 1.0;
-                string suffix = isNeumann ? " (≡ ∂u/∂ρ)" : string.Empty;
-                AddCircle(inner.R, b2, sign, Color.FromArgb(220, 30, 30), "Граница ρ = R" + suffix);
+                string suffix = isNeumann ? " (= du/dRo)" : string.Empty;
+                AddCircle(inner.R, b2, sign, Color.FromArgb(220, 30, 30), "Граница Ro = R" + suffix);
             }
             else if (_lastDomain is OuterDiskDomain outer)
             {
                 double sign = isNeumann ? -1.0 : 1.0;
-                string suffix = isNeumann ? " (≡ ∂u/∂ρ)" : string.Empty;
-                AddCircle(outer.R, b2, sign, Color.FromArgb(220, 30, 30), "Граница ρ = R" + suffix);
+                string suffix = isNeumann ? " (= du/dRo)" : string.Empty;
+                AddCircle(outer.R, b2, sign, Color.FromArgb(220, 30, 30), "Граница Ro = R" + suffix);
             }
         }
     }

@@ -194,7 +194,7 @@ namespace LaplasPuason.MathCore
             return r;
         }
 
-        public PolarPoly DerivativeRho()
+        public PolarPoly DerivativeRo()
         {
             var r = new PolarPoly();
             foreach (var t in _terms)
@@ -216,19 +216,19 @@ namespace LaplasPuason.MathCore
             return r;
         }
 
-        public double Evaluate(double rho, double phi)
+        public double Evaluate(double Ro, double phi)
         {
             double s = 0;
             foreach (var t in _terms)
             {
-                double rhoPow;
-                if (t.Key.K == 0) rhoPow = 1.0;
-                else if (t.Key.K > 0) rhoPow = Math.Pow(rho, t.Key.K);
-                else rhoPow = 1.0 / Math.Pow(rho, -t.Key.K);
+                double RoPow;
+                if (t.Key.K == 0) RoPow = 1.0;
+                else if (t.Key.K > 0) RoPow = Math.Pow(Ro, t.Key.K);
+                else RoPow = 1.0 / Math.Pow(Ro, -t.Key.K);
 
                 double trig = t.Key.IsSin ? Math.Sin(t.Key.N * phi) : Math.Cos(t.Key.N * phi);
-                double logFactor = t.Key.HasLog ? Math.Log(rho) : 1.0;
-                s += t.Value * rhoPow * trig * logFactor;
+                double logFactor = t.Key.HasLog ? Math.Log(Ro) : 1.0;
+                s += t.Value * RoPow * trig * logFactor;
             }
             return s;
         }
@@ -268,10 +268,10 @@ namespace LaplasPuason.MathCore
 
             if (k.K > 0)
             {
-                if (k.K == 1) parts.Add("ρ");
-                else parts.Add("ρ^" + k.K);
+                if (k.K == 1) parts.Add("Ro");
+                else parts.Add("Ro^" + k.K);
             }
-            if (k.HasLog) parts.Add("ln(ρ)");
+            if (k.HasLog) parts.Add("ln(Ro)");
             if (k.N > 0)
             {
                 string trigName = k.IsSin ? "sin" : "cos";
@@ -284,8 +284,8 @@ namespace LaplasPuason.MathCore
             if (k.K < 0)
             {
                 string denomBase;
-                if (k.K == -1) denomBase = "ρ";
-                else denomBase = "ρ^" + (-k.K);
+                if (k.K == -1) denomBase = "Ro";
+                else denomBase = "Ro^" + (-k.K);
                 return "(" + numerator + ")/" + denomBase;
             }
             return numerator;

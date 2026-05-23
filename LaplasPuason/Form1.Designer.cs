@@ -136,19 +136,19 @@ namespace LaplasPuason
             lblCenter = new Label { Text = "Введите центр окружности", AutoSize = true, Location = new Point(col1, rowY1Label) };
             txtCenter = new TextBox { Location = new Point(col1, rowY1Field), Size = new Size(colWidth - 200, 24), Text = "0,0" };
 
-            lblRadius1 = new Label { Text = "Введите радиус внутр. окружности", AutoSize = true, Location = new Point(col2, rowY1Label) };
+            lblRadius1 = new Label { Text = "Введите радиус внутренней окружности", AutoSize = true, Location = new Point(col2, rowY1Label) };
             txtRadius1 = new TextBox { Location = new Point(col2, rowY1Field), Size = new Size(colWidth - 200, 24), Text = "2" };
 
-            lblBoundary1 = new Label { Text = "Введите функцию на внутр. границе", AutoSize = true, Location = new Point(col3, rowY1Label) };
+            lblBoundary1 = new Label { Text = "Введите функцию на внутренней границе", AutoSize = true, Location = new Point(col3, rowY1Label) };
             txtBoundary1 = new TextBox { Location = new Point(col3, rowY1Field), Size = new Size(colWidth, 24), Text = "x^2-2*y^2+y-1" };
 
             lblSource = new Label { Text = "Введите функцию неоднородности", AutoSize = true, Location = new Point(col1, rowY2Label) };
             txtSource = new TextBox { Location = new Point(col1, rowY2Field), Size = new Size(colWidth, 24), Text = "-6*(x^2-y^2)" };
 
-            lblRadius2 = new Label { Text = "Введите радиус внеш. окружности", AutoSize = true, Location = new Point(col2, rowY2Label) };
+            lblRadius2 = new Label { Text = "Введите радиус внешней окружности", AutoSize = true, Location = new Point(col2, rowY2Label) };
             txtRadius2 = new TextBox { Location = new Point(col2, rowY2Field), Size = new Size(colWidth - 200, 24), Text = "3" };
 
-            lblBoundary2 = new Label { Text = "Введите функцию на внеш. границе", AutoSize = true, Location = new Point(col3, rowY2Label) };
+            lblBoundary2 = new Label { Text = "Введите функцию на внешней границе", AutoSize = true, Location = new Point(col3, rowY2Label) };
             txtBoundary2 = new TextBox { Location = new Point(col3, rowY2Field), Size = new Size(colWidth, 24), Text = "2*x^2+4*y^2+x-25" };
 
             lblDecimals = new Label { Text = "Число знаков после запятой", AutoSize = true, Location = new Point(col3, rowY3Label) };
