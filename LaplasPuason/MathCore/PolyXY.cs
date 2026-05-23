@@ -373,7 +373,7 @@ namespace LaplasPuason.MathCore
 
         private static PolyXY ParseAtom(List<Token> t, ref int pos)
         {
-            if (pos >= t.Count) throw new ParseException("Неожиданный конец выражения");
+            if (pos >= t.Count) throw new ParseException("Неожиданный конец выражения.");
             var tok = t[pos];
             if (tok.Type == Tk.Number)
             {
@@ -385,7 +385,7 @@ namespace LaplasPuason.MathCore
                 pos++;
                 var inner = ParseAddSub(t, ref pos);
                 if (pos >= t.Count || t[pos].Type != Tk.RParen)
-                    throw new ParseException("Ожидалась закрывающая скобка");
+                    throw new ParseException("Ожидалась закрывающая скобка.");
                 pos++;
                 return inner;
             }
@@ -394,8 +394,25 @@ namespace LaplasPuason.MathCore
                 pos++;
                 if (tok.Text == "x") return PolyXY.X;
                 if (tok.Text == "y") return PolyXY.Y;
+
                 if (tok.Text == "log" || tok.Text == "ln")
-                    throw new ParseException("Логарифм пока не поддерживается в данной версии. Используйте полином в x и y");
+                {
+                    if (pos >= t.Count || t[pos].Type != Tk.LParen)
+                        throw new ParseException($"Функция {tok.Text} требует аргумента в скобках");
+                    pos++;
+                    var inner = ParseAddSub(t, ref pos);
+                    if (pos >= t.Count || t[pos].Type != Tk.RParen)
+                        throw new ParseException("Ожидалась закрывающая скобка для логарифма");
+                    pos++;
+
+                    if (!inner.IsConstant(out var val))
+                        throw new ParseException("Аналитическое решение поддерживает логарифм только от численных констант");
+                    if (val <= 0)
+                        throw new ParseException("Аргумент логарифма должен быть строго больше нуля");
+
+                    return PolyXY.Const(Math.Log(val));
+                }
+
                 throw new ParseException("Неизвестный идентификатор " + tok.Text);
             }
             throw new ParseException("Неожиданный символ " + tok.Text);

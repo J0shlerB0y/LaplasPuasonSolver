@@ -316,7 +316,7 @@ namespace LaplasPuason.MathCore
             bool solvable = true;
 
             if (!srcPolar.IsZero)
-                diag += "Внимание: правая часть отлична от нуля. Внешнее решение Пуассона может быть неограниченным на бесконечности";
+                diag += "правая часть отлична от нуля. Внешнее решение Пуассона может быть неограниченным на бесконечности";
 
             if (type == BoundaryType.Dirichlet)
             {

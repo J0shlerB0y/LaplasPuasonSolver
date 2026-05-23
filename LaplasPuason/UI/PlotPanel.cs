@@ -65,7 +65,7 @@ namespace LaplasPuason.UI
             if (Math.Abs(maxY - minY) < 1e-12) { maxY += 1; minY -= 1; }
             if (Math.Abs(maxZ - minZ) < 1e-12) { maxZ += 1; minZ -= 1; }
 
-            int margin = 60;
+            int margin = 20;
             int w = ClientSize.Width - 2 * margin;
             int h = ClientSize.Height - 2 * margin;
             if (w <= 50 || h <= 50) return;
@@ -86,17 +86,24 @@ namespace LaplasPuason.UI
             double rangeZ = maxZ - minZ;
             double rangeXY = Math.Max(rangeX, rangeY);
 
+            if (rangeXY < 1e-12) rangeXY = 1.0;
+
+            double zScaleVis = (rangeZ > 1e-12) ? (rangeXY / rangeZ) * 0.7 : 1.0;
+
             Func<double, double, double, PointF> project = (x, y, z) =>
             {
                 double xc = x - midX;
                 double yc = y - midY;
                 double zc = z - midZ;
+
                 double xRot = xc * cosY - yc * sinY;
                 double yRot = xc * sinY + yc * cosY;
-                double zRot = zc;
+                double zRot = zc * zScaleVis;
+
                 double sx = xRot;
                 double sy = -(yRot * sinP) - zRot * cosP;
-                double scale = Math.Min(w, h) * 0.40 / Math.Max(rangeXY, rangeZ);
+
+                double scale = Math.Min(w, h) * 0.85 / rangeXY;
                 return new PointF((float)(cx + sx * scale), (float)(cy + sy * scale));
             };
 
@@ -178,10 +185,12 @@ namespace LaplasPuason.UI
                 {
                     var px = project(maxX, minY, minZ);
                     g.DrawString(XLabel, axFont, lblBrush, px.X - 4, px.Y + 18);
+
                     var py = project(minX, maxY, minZ);
                     g.DrawString(YLabel, axFont, lblBrush, py.X - 18, py.Y - 4);
+
                     var pz = project(minX, minY, maxZ);
-                    g.DrawString(ZLabel, axFont, lblBrush, pz.X - 30, pz.Y - 8);
+                    g.DrawString(ZLabel, axFont, lblBrush, pz.X - 10, pz.Y - 28);
                 }
             }
         }

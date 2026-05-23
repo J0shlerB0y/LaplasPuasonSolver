@@ -28,7 +28,6 @@ namespace LaplasPuason
 
             btnDirichlet.Click += (s, e) => Solve(BoundaryType.Dirichlet);
             btnNeumann.Click += (s, e) => Solve(BoundaryType.Neumann);
-            btnPlot.Click += (s, e) => RenderPlot();
 
             UpdateFieldVisibility();
         }
@@ -187,7 +186,7 @@ namespace LaplasPuason
                 }
                 if (!result.IsSolvable)
                 {
-                    output = "Решение не существует в классе ограниченных функций." + Environment.NewLine + output;
+                    output = "Решение не существует в классе ограниченных функций " + Environment.NewLine + output;
                 }
                 txtSolution.Text = output;
 

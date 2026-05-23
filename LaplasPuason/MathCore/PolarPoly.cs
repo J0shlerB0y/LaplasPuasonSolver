@@ -175,20 +175,30 @@ namespace LaplasPuason.MathCore
             var r = new PolarPoly();
             foreach (var t in _terms)
             {
-                if (t.Key.HasLog)
-                    throw new InvalidOperationException("Обратный лапласиан для членов с логарифмом");
                 int k = t.Key.K;
                 int n = t.Key.N;
                 int a = k + 2;
                 double denom = (double)a * a - (double)n * n;
-                if (Math.Abs(denom) < 1e-12)
+
+                if (t.Key.HasLog)
                 {
-                    double resCoef = t.Value / (2.0 * a);
-                    r.Add(new PolarKey(a, n, t.Key.IsSin, true), resCoef);
+                    if (Math.Abs(denom) < 1e-12)
+                        throw new InvalidOperationException("Непредвиденный двойной резонанс");
+
+                    r.Add(new PolarKey(a, n, t.Key.IsSin, true), t.Value / denom);
+                    r.Add(new PolarKey(a, n, t.Key.IsSin, false), -t.Value * 2.0 * a / (denom * denom));
                 }
                 else
                 {
-                    r.Add(new PolarKey(a, n, t.Key.IsSin, false), t.Value / denom);
+                    if (Math.Abs(denom) < 1e-12)
+                    {
+                        double resCoef = t.Value / (2.0 * a);
+                        r.Add(new PolarKey(a, n, t.Key.IsSin, true), resCoef);
+                    }
+                    else
+                    {
+                        r.Add(new PolarKey(a, n, t.Key.IsSin, false), t.Value / denom);
+                    }
                 }
             }
             return r;
@@ -249,9 +259,11 @@ namespace LaplasPuason.MathCore
             {
                 double c = Math.Round(t.Value, decimals);
                 if (Math.Abs(c) < Math.Pow(10, -decimals) / 2.0) continue;
+
                 string sign = c < 0 ? "-" : (first ? "" : "+");
                 double a = Math.Abs(c);
                 string body = FormatTerm(a, t.Key, decimals);
+
                 if (first) sb.Append(sign).Append(body);
                 else sb.Append(' ').Append(sign).Append(' ').Append(body);
                 first = false;
@@ -263,8 +275,14 @@ namespace LaplasPuason.MathCore
         {
             var parts = new List<string>();
             bool isPureConstant = (k.K == 0 && k.N == 0 && !k.HasLog);
+
+            string formatString = "F" + decimals.ToString();
+            string coefStr = absCoef.ToString(formatString, CultureInfo.InvariantCulture);
+
             if (isPureConstant || Math.Abs(absCoef - 1.0) > Math.Pow(10, -decimals) / 2.0)
-                parts.Add(absCoef.ToString("0." + new string('#', decimals), CultureInfo.InvariantCulture));
+            {
+                parts.Add(coefStr);
+            }
 
             if (k.K > 0)
             {
@@ -283,9 +301,7 @@ namespace LaplasPuason.MathCore
 
             if (k.K < 0)
             {
-                string denomBase;
-                if (k.K == -1) denomBase = "Ro";
-                else denomBase = "Ro^" + (-k.K);
+                string denomBase = (k.K == -1) ? "Ro" : "Ro^" + (-k.K);
                 return "(" + numerator + ")/" + denomBase;
             }
             return numerator;

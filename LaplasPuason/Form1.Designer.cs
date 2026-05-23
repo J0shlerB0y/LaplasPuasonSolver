@@ -46,7 +46,6 @@ namespace LaplasPuason
 
         private Button btnDirichlet;
         private Button btnNeumann;
-        private Button btnPlot;
 
         private TextBox txtSolution;
         private PlotPanel plotPanel;
@@ -178,18 +177,6 @@ namespace LaplasPuason
             };
             btnNeumann.FlatAppearance.BorderSize = 0;
 
-            btnPlot = new Button
-            {
-                Text = "Показать график",
-                Location = new Point(col3 + colWidth - 220, rowY3Field + 50),
-                Size = new Size(220, 36),
-                BackColor = Color.FromArgb(60, 80, 220),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat,
-                Font = new Font("Segoe UI", 9.5f, FontStyle.Regular)
-            };
-            btnPlot.FlatAppearance.BorderSize = 0;
-
             int solutionY = rowY3Field + 50;
             txtSolution = new TextBox
             {
@@ -213,23 +200,41 @@ namespace LaplasPuason
                 Title = "Граничные условия и решение"
             };
 
+            Panel pnlTasks = new Panel { Location = new Point(0, 35), Size = new Size(1240, 40) };
+            rbRing.Location = new Point(col1 + 90, 9);
+            rbInnerDisk.Location = new Point(col2 + 60, 9);
+            rbOuterDisk.Location = new Point(col3 + 60, 9);
+            pnlTasks.Controls.Add(rbRing);
+            pnlTasks.Controls.Add(rbInnerDisk);
+            pnlTasks.Controls.Add(rbOuterDisk);
+
+            Panel pnlInput = new Panel { Location = new Point(0, 100), Size = new Size(1240, 35) };
+            rbExplicit.Location = new Point(col1 + 110, 8);
+            rbImplicit.Location = new Point(col2 + 100, 8);
+            pnlInput.Controls.Add(rbExplicit);
+            pnlInput.Controls.Add(rbImplicit);
+
             Controls.Add(lblHeader);
-            Controls.Add(rbRing);
-            Controls.Add(rbInnerDisk);
-            Controls.Add(rbOuterDisk);
+            Controls.Add(pnlTasks);
             Controls.Add(lblParamsHeader);
-            Controls.Add(rbExplicit);
-            Controls.Add(rbImplicit);
-            Controls.Add(lblCenter); Controls.Add(txtCenter);
-            Controls.Add(lblSource); Controls.Add(txtSource);
-            Controls.Add(lblRadius1); Controls.Add(txtRadius1);
-            Controls.Add(lblRadius2); Controls.Add(txtRadius2);
-            Controls.Add(lblBoundary1); Controls.Add(txtBoundary1);
-            Controls.Add(lblBoundary2); Controls.Add(txtBoundary2);
-            Controls.Add(lblDecimals); Controls.Add(txtDecimals);
+            Controls.Add(pnlInput);
+
+            Controls.Add(lblCenter); 
+            Controls.Add(txtCenter);
+            Controls.Add(lblSource); 
+            Controls.Add(txtSource);
+            Controls.Add(lblRadius1); 
+            Controls.Add(txtRadius1);
+            Controls.Add(lblRadius2); 
+            Controls.Add(txtRadius2);
+            Controls.Add(lblBoundary1); 
+            Controls.Add(txtBoundary1);
+            Controls.Add(lblBoundary2); 
+            Controls.Add(txtBoundary2);
+            Controls.Add(lblDecimals); 
+            Controls.Add(txtDecimals);
             Controls.Add(btnDirichlet);
             Controls.Add(btnNeumann);
-            Controls.Add(btnPlot);
             Controls.Add(txtSolution);
             Controls.Add(plotPanel);
 
